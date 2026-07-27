@@ -1,0 +1,275 @@
+/* ─── Fonts ──────────────────────────────────────── */
+@import "@fontsource/bebas-neue";
+@import "@fontsource/playfair-display/400-italic.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Reset ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ─── Scene ──────────────────────────────────────── */
+.scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Background Sky ─────────────────────────────── */
+.sky-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 90% 40% at 50% 105%, rgba(14, 32, 65, 0.85) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 30% at 15% 5%,   rgba(6,  12, 30, 0.5)  0%, transparent 60%),
+    radial-gradient(ellipse 45% 25% at 85% 8%,   rgba(10, 18, 40, 0.4)  0%, transparent 55%),
+    linear-gradient(180deg,
+      #01050e  0%,
+      #04091a  18%,
+      #060e1e  42%,
+      #081524  68%,
+      #0c1e35  88%,
+      #0f2442  100%
+    );
+}
+
+/* ─── Star Layer ─────────────────────────────────── */
+.star-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: var(--op, 0.3); transform: scale(1); }
+  35%       { opacity: calc(var(--op, 0.3) * 0.25); transform: scale(0.85); }
+  65%       { opacity: calc(var(--op, 0.3) * 1.6);  transform: scale(1.2); }
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  animation: twinkle var(--dur, 4s) ease-in-out infinite var(--del, 0s);
+  will-change: opacity, transform;
+}
+
+/* ─── Shooting Star ──────────────────────────────── */
+.shooting-star-wrap {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  transform-origin: left center;
+}
+
+.shooting-star {
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.9) 35%, rgba(200,220,255,0.5) 65%, transparent 100%);
+  animation: shoot 1.1s cubic-bezier(0.2, 0, 0.8, 1) forwards;
+}
+
+@keyframes shoot {
+  from { opacity: 0; transform: translateX(-30px); }
+  12%  { opacity: 0.9; }
+  85%  { opacity: 0.4; }
+  to   { opacity: 0;   transform: translateX(220px); }
+}
+
+/* ─── Ambient Glows ──────────────────────────────── */
+@keyframes breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
+  50%       { transform: translate(-50%, -50%) scale(1.08); opacity: 0.6; }
+}
+
+.ambient-center {
+  position: absolute;
+  width: 90vw; height: 55vh;
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  background: radial-gradient(ellipse, rgba(141, 169, 255, 0.04) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  animation: breathe 18s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ambient-horizon {
+  position: absolute;
+  width: 120vw; height: 30vh;
+  border-radius: 50%;
+  bottom: -10vh; left: 50%;
+  background: radial-gradient(ellipse, rgba(201, 124, 139, 0.05) 0%, transparent 70%);
+  transform: translateX(-50%);
+  animation: breathe 22s ease-in-out infinite 4s;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ─── Foreground Vignette ────────────────────────── */
+.fg-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 18% at 50% 100%, rgba(4, 9, 20, 0.7) 0%, transparent 100%),
+    radial-gradient(ellipse 120% 12% at 50% 0%,   rgba(1, 5, 14, 0.5) 0%, transparent 100%),
+    radial-gradient(ellipse 20%  100% at 0%   50%, rgba(2, 6, 16, 0.35) 0%, transparent 100%),
+    radial-gradient(ellipse 20%  100% at 100% 50%, rgba(2, 6, 16, 0.35) 0%, transparent 100%);
+}
+
+/* ─── Content ────────────────────────────────────── */
+.content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* gently below mathematical center for cinematic weight */
+  margin-top: 10vh;
+  gap: 0;
+  width: 100%;
+}
+
+/* ─── Tagline ────────────────────────────────────── */
+.tagline-wrap {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity  2.2s cubic-bezier(0.25, 0, 0, 1),
+    transform 2.2s cubic-bezier(0.25, 0, 0, 1);
+  margin-bottom: clamp(40px, 7vh, 80px);
+  text-align: center;
+  padding: 0 24px;
+}
+.tagline-wrap.visible { opacity: 1; transform: translateY(0); }
+
+.tagline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(14px, 1.8vw, 22px);
+  color: #F4F2EC;
+  opacity: 0.48;
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+}
+
+/* ─── Countdown Wrapper ──────────────────────────── */
+.countdown-wrap {
+  position: relative;
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity  2.4s cubic-bezier(0.25, 0, 0, 1),
+    transform 2.4s cubic-bezier(0.25, 0, 0, 1);
+  text-align: center;
+}
+.countdown-wrap.visible { opacity: 1; transform: translateY(0); }
+
+/* Warm radial glow sitting behind the timer */
+.countdown-glow {
+  position: absolute;
+  inset: -80px -120px;
+  background: radial-gradient(ellipse at center, rgba(244, 201, 107, 0.055) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 50%;
+}
+
+/* ─── Timer Row ──────────────────────────────────── */
+.timer {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 clamp(10px, 2.5vw, 44px);
+}
+
+/* Number — Bebas Neue */
+.digit {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(72px, 12vw, 160px);
+  font-weight: 400;
+  line-height: 0.88;
+  color: #F4F2EC;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: 0.04em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Label */
+.unit-label {
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: clamp(8px, 0.9vw, 11px);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #F4C96B;
+  opacity: 0.5;
+  margin-top: clamp(6px, 1.2vh, 12px);
+  font-weight: 400;
+}
+
+/* Colon separators */
+.sep {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(60px, 10vw, 130px);
+  color: #F4C96B;
+  opacity: 0.35;
+  line-height: 0.88;
+  flex-shrink: 0;
+  user-select: none;
+  padding: 0 clamp(4px, 1.5vw, 16px);
+  align-self: center;
+  position: relative;
+  top: -0.08em; /* optical adjustment to center colons between numbers */
+}
+
+/* ─── Date Line ──────────────────────────────────── */
+.date-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: clamp(24px, 4vh, 44px);
+  opacity: 0.28;
+}
+.date-line::before,
+.date-line::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #F4C96B);
+}
+.date-line::after {
+  background: linear-gradient(to left, transparent, #F4C96B);
+}
+.date-text {
+  font-family: -apple-system, system-ui, sans-serif;
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #F4F2EC;
+}
