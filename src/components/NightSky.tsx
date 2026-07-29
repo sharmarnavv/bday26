@@ -238,6 +238,7 @@ export function NightSky({ className = '' }: NightSkyProps) {
 
     // ── Background ──
     if (bgCanvasRef.current) {
+      ctx.globalAlpha = 1 // Ensure background is drawn completely opaque
       ctx.drawImage(bgCanvasRef.current, 0, 0)
     }
 
