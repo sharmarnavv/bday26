@@ -1,3 +1,37 @@
+# anushka's birthday
+
+A pixel-art night sky counting down to 5 Aug 2026, plus a few pages to open once it lands.
+
+| page | hash | what it is |
+|------|------|------------|
+| countdown | `#/` | the original sky + countdown, now with her name on it |
+| wishes | `#/wishes` | sealed pixel envelopes; each letter types itself out |
+| memories | `#/memories` | framed photo gallery (arrow keys work) |
+| cake | `#/cake` | a procedurally drawn cake — tap the candles out, make a wish |
+| party | `#/celebrate` | the payoff: falling confetti, tap her name for more |
+
+## Editing the content
+
+Only three files need touching — no component edits required:
+
+- [`src/data/wishes.ts`](src/data/wishes.ts) — the letters. Swap `from` for real names and rewrite each `body`.
+- [`src/data/memories.ts`](src/data/memories.ts) — the gallery. Set `photoUrl` to an image URL or a file in `public/` (e.g. `/memories/goa.jpg`). Left empty, the frame shows a pixel placeholder.
+- [`src/data/birthday.ts`](src/data/birthday.ts) — her name and the line under the countdown.
+
+Look for `✏️ REPLACE` markers. The countdown target date stays in [`src/App.tsx`](src/App.tsx).
+
+## Running it
+
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # tsc -b && vite build
+```
+
+Routing is a ~30-line hash router ([`src/router.ts`](src/router.ts)) — no new dependencies, and it works on any static host with no rewrite rules.
+
+---
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

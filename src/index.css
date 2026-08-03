@@ -27,6 +27,411 @@ html, body, #root {
   -ms-interpolation-mode: nearest-neighbor;
 }
 
+/* ─── Confetti canvas ────────────────────────────────────────── */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  z-index: 2;
+  image-rendering: pixelated;
+}
+
+/* ─── Page layer ─────────────────────────────────────────────── */
+/* Sits above the sky, scrolls on its own, leaves room for the nav. */
+.page-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pg {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 48px 20px 132px;
+  text-align: center;
+}
+
+/* ─── Shared type ────────────────────────────────────────────── */
+.pg-eyebrow,
+.pg-sub,
+.pg-hint {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 1.1vw, 11px);
+  letter-spacing: 0.1em;
+  color: #F5ECD8;
+  opacity: 0.42;
+  line-height: 1.9;
+  -webkit-font-smoothing: none;
+}
+
+.pg-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(24px, 5.5vw, 52px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #E8C46A;
+  line-height: 1.2;
+  -webkit-font-smoothing: none;
+}
+
+.pg-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(16px, 3vw, 28px);
+  color: #F5ECD8;
+  letter-spacing: 0.05em;
+  -webkit-font-smoothing: none;
+}
+
+/* ─── Pixel button ───────────────────────────────────────────── */
+.px-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 1.1vw, 11px);
+  color: #F5ECD8;
+  background: #13254D;
+  border: 0;
+  padding: 12px 16px;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  -webkit-font-smoothing: none;
+  /* 8-bit chamfered border, drawn in whole pixels */
+  box-shadow:
+    0 -3px 0 #1E3E78, 0 3px 0 #1E3E78, -3px 0 0 #1E3E78, 3px 0 0 #1E3E78,
+    0 6px 0 rgba(6, 14, 34, 0.55);
+  transition: transform 90ms steps(2), color 90ms steps(2);
+}
+
+.px-btn:hover { color: #FFF8DC; transform: translateY(-2px); }
+.px-btn:active { transform: translateY(2px); box-shadow: 0 -3px 0 #1E3E78, 0 3px 0 #1E3E78, -3px 0 0 #1E3E78, 3px 0 0 #1E3E78; }
+.px-btn.is-lit { color: #0B1736; background: #E8C46A; box-shadow: 0 -3px 0 #F5ECD8, 0 3px 0 #F5ECD8, -3px 0 0 #F5ECD8, 3px 0 0 #F5ECD8, 0 6px 0 rgba(6, 14, 34, 0.55); }
+
+/* ─── Pixel panel ────────────────────────────────────────────── */
+.pp {
+  width: min(680px, 100%);
+  background: rgba(11, 23, 54, 0.88);
+  box-shadow:
+    0 -4px 0 #1E3E78, 0 4px 0 #1E3E78, -4px 0 0 #1E3E78, 4px 0 0 #1E3E78;
+  text-align: left;
+}
+
+.pp-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 1.1vw, 11px);
+  color: #0B1736;
+  background: #E8C46A;
+  padding: 10px 14px;
+  letter-spacing: 0.08em;
+  -webkit-font-smoothing: none;
+}
+
+.pp-body {
+  padding: 20px 22px 24px;
+  font-family: 'VT323', monospace;
+  font-size: clamp(18px, 2.2vw, 23px);
+  line-height: 1.55;
+  color: #F5ECD8;
+}
+
+.pp-body p + p { margin-top: 14px; }
+
+/* ─── Bottom nav ─────────────────────────────────────────────── */
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 10px 14px;
+  background: linear-gradient(to top, rgba(6, 14, 34, 0.92), rgba(6, 14, 34, 0));
+}
+
+.nav-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 1vw, 10px);
+  color: #F5ECD8;
+  opacity: 0.5;
+  background: transparent;
+  border: 0;
+  padding: 8px 10px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  -webkit-font-smoothing: none;
+}
+
+.nav-btn:hover { opacity: 0.9; }
+.nav-btn.is-active {
+  opacity: 1;
+  color: #E8C46A;
+  box-shadow: 0 3px 0 #E8C46A;
+}
+
+/* ─── Wishes ─────────────────────────────────────────────────── */
+.env-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  width: min(880px, 100%);
+}
+
+.env {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 148px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 26px 16px 16px;
+  cursor: pointer;
+  text-align: left;
+  border: 0;
+  background: #13254D;
+  box-shadow: 0 -3px 0 #1E3E78, 0 3px 0 #1E3E78, -3px 0 0 #1E3E78, 3px 0 0 #1E3E78;
+  transition: transform 100ms steps(2);
+}
+
+.env:hover { transform: translateY(-3px); }
+
+/* The flap: two chamfered pixel steps meeting in the middle. */
+.env-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: #1E3E78;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.env-from {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  line-height: 1.7;
+  color: #E8C46A;
+  letter-spacing: 0.05em;
+  -webkit-font-smoothing: none;
+}
+
+.env-teaser {
+  font-family: 'VT323', monospace;
+  font-size: 19px;
+  line-height: 1.35;
+  color: #F5ECD8;
+  opacity: 0.8;
+}
+
+.env-cta {
+  margin-top: auto;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #F5ECD8;
+  opacity: 0.55;
+  -webkit-font-smoothing: none;
+}
+
+.env.is-read { background: rgba(19, 37, 77, 0.55); }
+.env.is-read .env-from { color: #D99AA4; }
+
+.wish-letter { max-width: 680px; }
+.wish-body { cursor: pointer; min-height: 220px; }
+.wish-body p { white-space: pre-wrap; }
+
+.wish-caret {
+  display: inline-block;
+  width: 10px;
+  height: 18px;
+  background: #E8C46A;
+  vertical-align: -3px;
+  animation: caret-blink 900ms steps(1, end) infinite;
+}
+
+@keyframes caret-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+.wish-signoff {
+  margin-top: 18px;
+  font-family: 'VT323', monospace;
+  font-size: clamp(18px, 2.2vw, 23px);
+  color: #D99AA4;
+}
+
+.wish-letter .px-btn { margin-top: 22px; }
+
+/* ─── Memories ───────────────────────────────────────────────── */
+.mem-frame {
+  width: min(560px, 100%);
+  background: #F5ECD8;
+  padding: 12px 12px 0;
+  box-shadow: 0 -4px 0 #F5ECD8, 0 4px 0 #F5ECD8, -4px 0 0 #F5ECD8, 4px 0 0 #F5ECD8, 0 10px 0 rgba(6, 14, 34, 0.5);
+}
+
+.mem-img,
+.mem-ph {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  image-rendering: auto;
+  background: #13254D;
+}
+
+.mem-ph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.mem-ph-heart {
+  width: 56px;
+  height: 48px;
+  fill: #D99AA4;
+  image-rendering: pixelated;
+}
+
+.mem-ph-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #F5ECD8;
+  opacity: 0.45;
+  -webkit-font-smoothing: none;
+}
+
+.mem-cap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 4px 18px;
+  text-align: left;
+}
+
+.mem-cap strong {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #0B1736;
+  letter-spacing: 0.04em;
+  -webkit-font-smoothing: none;
+}
+
+.mem-cap span {
+  font-family: 'VT323', monospace;
+  font-size: 19px;
+  color: #253A2B;
+}
+
+.mem-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.mem-dots { display: flex; gap: 6px; }
+
+.mem-dot {
+  width: 6px;
+  height: 6px;
+  background: #F5ECD8;
+  opacity: 0.3;
+}
+
+.mem-dot.is-on { opacity: 1; background: #E8C46A; }
+
+/* ─── Cake ───────────────────────────────────────────────────── */
+.cake-canvas {
+  width: min(90vw, 520px);
+  height: auto;
+  cursor: pointer;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.cake-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.cake-wish {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(11px, 1.8vw, 16px);
+  color: #E8C46A;
+  letter-spacing: 0.05em;
+  -webkit-font-smoothing: none;
+}
+
+/* ─── Celebrate ──────────────────────────────────────────────── */
+.cel-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.cel-line,
+.cel-name {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  -webkit-font-smoothing: none;
+}
+
+.cel-line {
+  font-size: clamp(18px, 4vw, 40px);
+  color: #F5ECD8;
+}
+
+.cel-name {
+  font-size: clamp(24px, 6.5vw, 62px);
+  color: #E8C46A;
+  background: transparent;
+  border: 0;
+  padding: 4px 2px;
+  cursor: pointer;
+}
+
+.cel-ch {
+  display: inline-block;
+  animation: ch-drop 520ms steps(6, end) both;
+}
+
+@keyframes ch-drop {
+  from { transform: translateY(-22px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.cel-note { margin-top: 10px; }
+
+.cel-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cel-ch { animation: none; }
+  .wish-caret { animation: none; }
+  .px-btn { transition: none; }
+  .env:hover, .px-btn:hover { transform: none; }
+}
+
 /* ─── Countdown wrapper ──────────────────────────────────────── */
 .cd-wrap {
   position: absolute;
@@ -42,7 +447,10 @@ html, body, #root {
 .cd-root {
   display: flex;
   align-items: flex-start;
-  gap: clamp(16px, 3vw, 40px);
+  /* 8 digits + 3 separators + 6 gaps has to stay inside the viewport, so the
+     sizes below are tuned to ~80vw total — anything larger clipped the days. */
+  gap: clamp(6px, 1.6vw, 26px);
+  max-width: 100%;
   /* Pixel-grid snapping */
   image-rendering: pixelated;
 }
@@ -58,7 +466,7 @@ html, body, #root {
 /* ─── Digit ──────────────────────────────────────────────────── */
 .cd-digit {
   font-family: 'Press Start 2P', monospace;
-  font-size: clamp(48px, 10vw, 120px);
+  font-size: clamp(22px, 6.6vw, 88px);
   color: #F5ECD8;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -83,11 +491,11 @@ html, body, #root {
 /* ─── Separator ──────────────────────────────────────────────── */
 .cd-sep {
   font-family: 'Press Start 2P', monospace;
-  font-size: clamp(32px, 7vw, 80px);
+  font-size: clamp(16px, 4.4vw, 56px);
   color: #F5ECD8;
   opacity: 0.35;
   line-height: 1;
-  height: clamp(48px, 10vw, 120px); /* Matches digit height */
+  height: clamp(22px, 6.6vw, 88px); /* Matches digit height */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,5 +504,13 @@ html, body, #root {
 
 /* ─── Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  .cd-root { gap: 10px; }
+  /* Four units in a row cannot shrink below the viewport, so they wrap into a
+     2×2 grid and the separators drop out. */
+  .cd-root {
+    flex-wrap: wrap;
+    gap: 14px 20px;
+    max-width: 300px;
+  }
+  .cd-unit { gap: 8px; flex: 0 0 calc(50% - 10px); }
+  .cd-sep { display: none; }
 }

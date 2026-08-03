@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react'
 import { NightSky } from './components/NightSky'
-import { Countdown } from './components/Countdown'
+import { PixelNav } from './components/PixelNav'
+import { Home } from './pages/Home'
+import { Wishes } from './pages/Wishes'
+import { Memories } from './pages/Memories'
+import { Cake } from './pages/Cake'
+import { Celebrate } from './pages/Celebrate'
+import { useRoute } from './router'
 import type { TimeLeft } from './components/Countdown'
 import './index.css'
 
@@ -22,6 +28,7 @@ function calcTimeLeft(): TimeLeft {
 export default function App() {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calcTimeLeft)
   const isPast = BIRTHDAY.getTime() <= Date.now()
+  const route = useRoute()
 
   // Tick every second — countdown logic unchanged
   useEffect(() => {
@@ -32,13 +39,18 @@ export default function App() {
 
   return (
     <div className="scene">
-      {/* NightSky: full-canvas pixel art background */}
+      {/* NightSky: full-canvas pixel art background, shared by every page */}
       <NightSky />
 
-      {/* Countdown: centered in the sky, Press Start 2P / Minecraft font */}
-      <div className="cd-wrap">
-        <Countdown timeLeft={timeLeft} />
-      </div>
+      <main className="page-layer">
+        {route === 'home'      && <Home timeLeft={timeLeft} isPast={isPast} />}
+        {route === 'wishes'    && <Wishes />}
+        {route === 'memories'  && <Memories />}
+        {route === 'cake'      && <Cake />}
+        {route === 'celebrate' && <Celebrate />}
+      </main>
+
+      <PixelNav route={route} />
     </div>
   )
 }
